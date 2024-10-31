@@ -1,0 +1,12 @@
+dist/*
+node_modules
+.env
+
+*_sessions
+*tokens
+.wwebjs*
+
+*.log
+*qr.png
+
+src/config/prueba-fpgt-11b1d31aea6f.json
