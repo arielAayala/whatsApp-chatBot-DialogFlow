@@ -4,7 +4,7 @@ import fs from "fs/promises";
 async function loadConfig() {
 	try {
 		const data = await fs.readFile(
-			"./src/config/prueba-fpgt-11b1d31aea6f.json",
+			process.env.GOOGLE_APPLICATION_CREDENTIALS,
 			"utf-8"
 		);
 
