@@ -1,6 +1,6 @@
-# WhatsApp Chatbot con API Oficial de Meta y Dialogflow de Google, además de utilizar builderBot para la integración.
+# WhatsApp Chatbot con API Oficial de Meta y Dialogflow ES de Google.
 
-Este proyecto es un chatbot de WhatsApp desarrollado utilizando la API oficial de Meta y la integración con Dialogflow de Google para procesamiento de lenguaje natural.
+Este proyecto es un chatbot de WhatsApp desarrollado utilizando la API oficial de Meta y la integración con Dialogflow de Google para procesamiento de lenguaje natural, además de utilizar BuilderBot.
 
 ## Requisitos
 
@@ -23,18 +23,18 @@ Para utilizar las APIs de Meta y Google, asegúrate de agregar tus claves de API
 
 #### Clave de Meta
 
-Agrega la clave de Meta en un archivo .env de la siguiente manera:
+Primero debes crear tu aplicación en Meta en el <a target="_blank" href="https://developers.facebook.com/">Sitio Oficial</a> y Agrega las claves de Meta en un archivo .env de la siguiente manera:
 
 ```
-PORT=
-jwtToken=
-numberId=
-verifyToken=
+PORT=3008
+JWT_TOKEN=your_meta_jwt_token
+NUMBER_ID=your_number_id
+VERIFY_TOKEN=your_verify_token
 ```
 
 #### Clave de Google
 
-La clave de Google debe estar en un archivo JSON que se puede descargar desde la consola de Google Cloud. Guarda este archivo dentro de la carpeta raiz del proyecto y especifica la ruta en el archivo .env:
+La clave de Google debe estar en un archivo JSON que se puede descargar desde la consola de <a target="_blank" href="https://console.cloud.google.com/">Google Cloud</a>. Guarda este archivo dentro de la carpeta raiz del proyecto y especifica la ruta en el archivo .env:
 
 ```
 GOOGLE_APPLICATION_CREDENTIALS=./ruta/al/archivo_google_key.json
