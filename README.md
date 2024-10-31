@@ -1,44 +1,59 @@
-<p align="center">
-  <a href="https://builderbot.vercel.app/">
-    <picture>
-      <img src="https://builderbot.vercel.app/assets/thumbnail-vector.png" height="80">
-    </picture>
-    <h2 align="center">BuilderBot</h2>
-  </a>
-</p>
+# WhatsApp Chatbot con API Oficial de Meta y Dialogflow de Google, además de utilizar builderBot para la integración.
 
+Este proyecto es un chatbot de WhatsApp desarrollado utilizando la API oficial de Meta y la integración con Dialogflow de Google para procesamiento de lenguaje natural.
 
+## Requisitos
 
-<p align="center">
-  <a aria-label="NPM version" href="https://www.npmjs.com/package/@builderbot/bot">
-    <img alt="" src="https://img.shields.io/npm/v/@builderbot/bot?color=%2300c200&label=%40bot-whatsapp">
-  </a>
-  <a aria-label="Join the community on GitHub" href="https://link.codigoencasa.com/DISCORD">
-    <img alt="" src="https://img.shields.io/discord/915193197645402142?logo=discord">
-  </a>
-</p>
+- **Node.js**: Se necesita una versión de Node.js mayor a `v20.10.0`.
+- **Claves de API**: Se requieren claves de API de Meta y Google para que el chatbot funcione correctamente.
 
+## Configuración
 
-## Getting Started
+### 1. Instalar dependencias
 
-With this library, you can build automated conversation flows agnostic to the WhatsApp provider, set up automated responses for frequently asked questions, receive and respond to messages automatically, and track interactions with customers. Additionally, you can easily set up triggers to expand functionalities limitlessly.
+Primero, instala las dependencias necesarias ejecutando el siguiente comando en el directorio del proyecto:
 
+```bash
+npm install
 ```
-npm create builderbot@latest
+### 2. Configurar las claves de la API de Meta
+Para utilizar las APIs de Meta y Google, asegúrate de agregar tus claves de API correspondientes:
+
+### Clave de Meta 
+Agrega la clave de Meta en un archivo .env de la siguiente manera:
+
+```bash
+PORT= 
+jwtToken=
+numberId= 
+verifyToken= 
+```
+### Clave de Google 
+La clave de Google debe estar en un archivo JSON que se puede descargar desde la consola de Google Cloud. Guarda este archivo dentro de la carpeta config del proyecto y especifica la ruta en el archivo .env:
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=./ruta/al/archivo_google_key.json
 ```
 
+### 3. Iniciar el servidor en modo de desarrollo
+Para ejecutar el chatbot en modo de desarrollo, utiliza:
 
-## Documentation
+bash
+```
+npm run dev
+``` 
+Esto iniciará el servidor y habilitará el chatbot en el entorno de desarrollo.
 
-Visit [builderbot](https://builderbot.vercel.app/) to view the full documentation.
+### Uso
+Una vez que el servidor esté en ejecución, el chatbot estará disponible para responder a los mensajes de WhatsApp mediante la API de Meta, utilizando las capacidades de Dialogflow para procesar las consultas y responder de manera inteligente.
+
+### Contribuciones
+Las contribuciones son bienvenidas. Si deseas mejorar el proyecto, por favor haz un fork, realiza tus cambios y envía un pull request. 😎
 
 
-## Official Course
-
-If you want to discover all the functions and features offered by the library you can take the course.
-[View Course](https://app.codigoencasa.com/courses/builderbot?refCode=LEIFER)
 
 
-## Contact Us
-- [💻 Discord](https://link.codigoencasa.com/DISCORD)
-- [👌 𝕏 (Twitter)](https://twitter.com/leifermendez)
+
+
+
+
