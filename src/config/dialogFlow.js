@@ -49,12 +49,9 @@ export const textQuery = async (userText, userId) => {
 		};
 
 		const response = await sessionClient.detectIntent(request);
-		const responseSend = response[0].queryResult.fulfillmentText;
-		console.log(responseSend);
 
-		return responseSend;
+		return response;
 	} catch (error) {
-		console.error("Error in textQuery:", error);
 		return error;
 	}
 };

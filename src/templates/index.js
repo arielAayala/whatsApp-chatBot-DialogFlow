@@ -1,4 +1,4 @@
 import { createFlow } from "@builderbot/bot";
-import { consultaFlow, welcomeFlow } from "./WelcomeFlow.js";
+import { dialogFlow, welcomeFlow } from "./WelcomeFlow.js";
 
-export default createFlow([welcomeFlow, consultaFlow]);
+export default createFlow([welcomeFlow, dialogFlow]);
