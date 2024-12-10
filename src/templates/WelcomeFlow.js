@@ -25,25 +25,31 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 });
 
 const dialogFlow = addKeyword(EVENTS.ACTION).addAction(
-	async (_, { state, flowDynamic }) => {
+	async (ctx, { state, flowDynamic }) => {
+		const currentState = state.getMyState();
 		try {
-			const currentState = state.getMyState();
-
-			await flowDynamic(
-				currentState.message.response?.stringValue || currentState.message
-			);
-			if (currentState.message.question?.stringValue) {
+			if (currentState.message.type?.stringValue == "mainMenu") {
 				await flowDynamic([
 					{
-						body: currentState.message.question?.stringValue,
+						header: "Menu",
+						body: currentState.message.response?.stringValue,
 						buttons: currentState.message.button?.listValue.values.map((i) => {
 							return { body: i.stringValue };
 						}),
 					},
 				]);
+			} else if (currentState.message.type?.stringValue == "areasMenu") {
+				await flowDynamic([
+					{
+						header: "Menu",
+						body: currentState.message.response?.stringValue,
+					},
+				]);
+			} else {
+				await flowDynamic(currentState.message);
 			}
 		} catch (error) {
-			await flowDynamic("Oops... Ha ocurrido un error");
+			await flowDynamic("Oops... Ocurrio un error");
 		}
 	}
 );
