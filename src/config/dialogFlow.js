@@ -1,41 +1,21 @@
 import { SessionsClient } from "dialogflow/src/v2beta1/index.js";
-import fs from "fs/promises";
+import "dotenv/config";
 
-async function loadConfig() {
+export const fetchDialogFlow = async (userText, userId) => {
 	try {
-		const data = await fs.readFile(
-			process.env.GOOGLE_APPLICATION_CREDENTIALS,
-			"utf-8"
-		);
+		const { project_id, client_email, private_key, session_id } = process.env;
 
-		return JSON.parse(data);
-	} catch (error) {
-		console.error("Error reading config file:", error);
-		throw error;
-	}
-}
+		const sessionClient = new SessionsClient({
+			projectId: project_id,
+			credentials: {
+				client_email: client_email,
+				private_key: private_key.replace(/\\n/g, "\n"), // Reemplaza los saltos de línea
+			},
+		});
 
-async function initialize() {
-	const config = await loadConfig();
-
-	const projectId = config.project_id;
-
-	const credentials = {
-		client_email: config.client_email,
-		private_key: config.private_key,
-	};
-
-	const sessionClient = new SessionsClient({ projectId, credentials });
-
-	return { sessionClient, config };
-}
-
-export const textQuery = async (userText, userId) => {
-	try {
-		const { sessionClient, config } = await initialize();
 		const sessionPath = sessionClient.sessionPath(
-			config.project_id,
-			(config.sessionId ?? "testing-session") + userId
+			project_id,
+			(session_id || "testing-session") + userId
 		);
 
 		const request = {
@@ -48,10 +28,11 @@ export const textQuery = async (userText, userId) => {
 			},
 		};
 
-		const response = await sessionClient.detectIntent(request);
+		const [response] = await sessionClient.detectIntent(request);
 
 		return response;
 	} catch (error) {
-		return error;
+		console.error("Error fetching Dialogflow response:", error.message);
+		throw error;
 	}
 };

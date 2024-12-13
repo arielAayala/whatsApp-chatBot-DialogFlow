@@ -1,5 +1,5 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
-import { textQuery } from "../config/dialogFlow.js";
+import { fetchDialogFlow } from "../config/dialogFlow.js";
 
 /**
  * PLugin Configuration
@@ -8,7 +8,9 @@ import { textQuery } from "../config/dialogFlow.js";
 const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 	const { state, gotoFlow } = ctxFn;
 
-	let response = await textQuery(ctx.body, ctx.from);
+	let response = await fetchDialogFlow(ctx.body, ctx.from);
+
+	console.log(response);
 
 	if (!response) {
 		return ctxFn.flowDynamic(
@@ -18,13 +20,17 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 
 	await state.update({
 		message:
-			response[0].queryResult.fulfillmentMessages[1]?.payload.fields.response
-				.structValue.fields || response[0].queryResult.fulfillmentText,
+			response.queryResult.fulfillmentMessages[1]?.payload.fields.response
+				.structValue.fields || response.queryResult.fulfillmentText,
 	});
-	return gotoFlow(dialogFlow);
+
+	if (response.queryResult.intent.endInteraction) {
+		return gotoFlow(endFlow);
+	}
+	return gotoFlow(conversacionalFlow);
 });
 
-const dialogFlow = addKeyword(EVENTS.ACTION).addAction(
+const conversacionalFlow = addKeyword(EVENTS.ACTION).addAction(
 	async (ctx, { state, flowDynamic }) => {
 		const currentState = state.getMyState();
 		try {
@@ -54,4 +60,22 @@ const dialogFlow = addKeyword(EVENTS.ACTION).addAction(
 	}
 );
 
-export { welcomeFlow, dialogFlow };
+const endFlow = addKeyword(EVENTS.ACTION).addAction(
+	async (ctx, { state, flowDynamic }) => {
+		const currentState = state.getMyState();
+		try {
+			await flowDynamic([
+				{
+					header: "End",
+					body:
+						currentState.message.response?.stringValue || currentState.message,
+					buttons: [{ body: "Volver al Inicio" }],
+				},
+			]);
+		} catch (error) {
+			await flowDynamic("Oops... Ocurrio un error");
+		}
+	}
+);
+
+export { welcomeFlow, conversacionalFlow, endFlow };
