@@ -27,7 +27,6 @@ ENV PORT $PORT
 EXPOSE $PORT
 
 COPY --from=builder /app/assets ./assets
-COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/*.json /app/*-lock.yaml ./
 
 RUN corepack enable && corepack prepare pnpm@latest --activate 
