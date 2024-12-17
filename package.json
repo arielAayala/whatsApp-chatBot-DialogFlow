@@ -14,7 +14,8 @@
 		"@builderbot/bot": "1.2.2",
 		"@builderbot/provider-meta": "1.2.2",
 		"dialogflow": "^1.2.0",
-		"dotenv": "^16.4.5"
+		"dotenv": "^16.4.5",
+		"googleapis": "^144.0.0"
 	},
 	"devDependencies": {
 		"eslint": "^8.57.0",

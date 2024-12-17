@@ -1,21 +1,80 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { fetchDialogFlow } from "../config/dialogFlow.js";
+import { reclamosFlow } from "./ReclamosFlow.js";
 
 /**
  * PLugin Configuration
  */
 
 const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
-	const { state, gotoFlow } = ctxFn;
+	const { state, gotoFlow, flowDynamic } = ctxFn;
 
 	let response = await fetchDialogFlow(ctx.body, ctx.from);
-
-	console.log(response);
-
+	/* Validamos si es que existe una respuesta por parte del agente de dialogFlow */
 	if (!response) {
 		return ctxFn.flowDynamic(
 			"Oops, disculpe... Por el momento, no esta funcionando el sistema"
 		);
+	}
+
+	console.log(response);
+
+	if (
+		response.queryResult.intent.displayName.startsWith("Reclamos") &&
+		response.queryResult.intent.displayName != "Reclamos"
+	) {
+		let nombreCompleto = response.queryResult.parameters?.nombreCompleto;
+		let documento = response.queryResult.parameters?.documento;
+
+		if (!nombreCompleto || !documento) {
+			const contexts = response.queryResult.outputContexts || [];
+			contexts.forEach((context) => {
+				if (context.name.includes("bienvenido-followup")) {
+					const params = context.parameters;
+
+					nombreCompleto = params.fields.nombreCompleto.stringValue;
+					documento = params.fields.documento.stringValue;
+				}
+			});
+		}
+
+		if (!nombreCompleto || !documento) {
+			return await flowDynamic([
+				{
+					header: "End",
+					body: "No existen los parámetros necesarios",
+					buttons: [{ body: "Volver al inicio" }],
+				},
+			]);
+		}
+
+		let intentName = response.queryResult.intent.displayName;
+		let additionalData = "";
+
+		if (intentName === "Reclamos - Servicios Públicos-4") {
+			additionalData = "Servicios Públicos";
+		} else if (intentName === "Reclamos - Defensa del consumidor-1") {
+			additionalData = "Defensa del Consumidor";
+		} else if (intentName === "Reclamos - Juventud-3") {
+			additionalData = "Juventud";
+		} else if (intentName === "Reclamos - Defensoría Itinerante-5") {
+			additionalData = "Defensoría Itinerante";
+		} else if (intentName === "Reclamos - Derechos Del Inquilinos-2") {
+			additionalData = "Derechos de Inquilinos";
+		}
+
+		await state.update({
+			documento: documento,
+			nombreCompleto: nombreCompleto,
+			area: additionalData,
+		});
+		return gotoFlow(reclamosFlow);
+	}
+
+	/* Si la respuesta del dialogFlow tiene el atributo endInteraction 
+	se redirige la conversacion para que este posea un Botón de "volver al Inicio" */
+	if (response.queryResult.intent.endInteraction) {
+		return gotoFlow(endFlow);
 	}
 
 	await state.update({
@@ -24,9 +83,6 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 				.structValue.fields || response.queryResult.fulfillmentText,
 	});
 
-	if (response.queryResult.intent.endInteraction) {
-		return gotoFlow(endFlow);
-	}
 	return gotoFlow(conversacionalFlow);
 });
 
@@ -52,7 +108,9 @@ const conversacionalFlow = addKeyword(EVENTS.ACTION).addAction(
 					},
 				]);
 			} else {
-				await flowDynamic(currentState.message);
+				await flowDynamic(
+					currentState.message.response?.stringValue || currentState.message
+				);
 			}
 		} catch (error) {
 			await flowDynamic("Oops... Ocurrio un error");
