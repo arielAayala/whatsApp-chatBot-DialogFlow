@@ -69,17 +69,20 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 		return gotoFlow(reclamosFlow);
 	}
 
-	/* Si la respuesta del dialogFlow tiene el atributo endInteraction 
-	se redirige la conversacion para que este posea un Botón de "volver al Inicio" */
-	if (response.queryResult.intent.endInteraction) {
-		return gotoFlow(endFlow);
-	}
-
 	await state.update({
 		message:
 			response.queryResult.fulfillmentMessages[1]?.payload.fields.response
 				.structValue.fields || response.queryResult.fulfillmentText,
 	});
+
+	/* Si la respuesta del dialogFlow tiene el atributo endInteraction 
+	se redirige la conversacion para que este posea un Botón de "volver al Inicio" */
+
+	if (response.queryResult.intent.endInteraction) {
+		return gotoFlow(endFlow);
+	}
+
+	/* Si no continua su flujo normal */
 
 	return gotoFlow(conversacionalFlow);
 });
@@ -103,6 +106,9 @@ const conversacionalFlow = addKeyword(EVENTS.ACTION).addAction(
 					{
 						header: "Menu",
 						body: currentState.message.response?.stringValue,
+						buttons: currentState.message.button?.listValue.values.map((i) => {
+							return { body: i.stringValue };
+						}),
 					},
 				]);
 			} else {
