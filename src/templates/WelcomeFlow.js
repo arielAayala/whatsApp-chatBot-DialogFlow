@@ -17,8 +17,6 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 		);
 	}
 
-	console.log(response);
-
 	if (
 		response.queryResult.intent.displayName.startsWith("Reclamos") &&
 		response.queryResult.intent.displayName != "Reclamos"
