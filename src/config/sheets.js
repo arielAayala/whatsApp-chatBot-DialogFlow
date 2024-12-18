@@ -17,14 +17,22 @@ export const insertInSheets = async (
 		const client = await auth.getClient();
 
 		// Preparar los valores para insertar en Google Sheets
+
+		let codigoReclamoGenerado = (new Date().now() + Math.random())
+			.toString()
+			.slice(-8);
+
 		const valores = [
 			[
 				documento,
 				nombreCompleto,
 				telefono,
-				new Date().toLocaleString("es-AR"),
+				new Date().toLocaleString("es-AR", {
+					timeZone: "America/Argentina/Buenos_Aires",
+				}),
 				area,
 				motivo,
+				codigoReclamoGenerado,
 			],
 		];
 
@@ -32,14 +40,18 @@ export const insertInSheets = async (
 		await sheets.spreadsheets.values.append({
 			auth: client,
 			spreadsheetId: SPREADSHEET_ID,
-			range: `${nombreDeHoja}!A:F`, // Asegúrate de que el rango sea correcto
+			range: `${nombreDeHoja}!A:G`, // Asegúrate de que el rango sea correcto
 			valueInputOption: "USER_ENTERED",
 			requestBody: {
 				values: valores,
 			},
 		});
 
-		return "Tu comentarios se han guardado correctamente. \nPronto se comunicarán contigo";
+		if (nombreDeHoja == "RECLAMOS") {
+			return `Tu reclamo se han guardado correctamente.\nTu codigo es: ${codigoReclamoGenerado} \nPronto se comunicarán contigo`;
+		} else {
+			return "Tu comentarios se han guardado correctamente. \nPronto se comunicarán contigo";
+		}
 		/* // *** INSERTAR DATOS EN MySQL ***
 		const sql = `INSERT INTO registros (nombre, documento, area) VALUES (?, ?, ?)`;
 		await pool.query(sql, [nombreCompleto, documento, additionalData]);
