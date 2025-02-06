@@ -10,6 +10,9 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 	const { state, gotoFlow, flowDynamic } = ctxFn;
 
 	let response = await fetchDialogFlow(ctx.body, ctx.from);
+
+	console.log(response);
+
 	/* Validamos si es que existe una respuesta por parte del agente de dialogFlow */
 	if (!response) {
 		return ctxFn.flowDynamic(
@@ -88,7 +91,7 @@ const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(async (ctx, ctxFn) => {
 });
 
 const conversacionalFlow = addKeyword(EVENTS.ACTION).addAction(
-	async (ctx, { state, flowDynamic }) => {
+	async (ctx, { state, flowDynamic, provider }) => {
 		const currentState = state.getMyState();
 		try {
 			if (currentState.message.type?.stringValue == "mainMenu") {
@@ -102,15 +105,53 @@ const conversacionalFlow = addKeyword(EVENTS.ACTION).addAction(
 					},
 				]);
 			} else if (currentState.message.type?.stringValue == "areasMenu") {
-				await flowDynamic([
-					{
-						header: "Menu",
-						body: currentState.message.response?.stringValue,
-						buttons: currentState.message.button?.listValue.values.map((i) => {
-							return { body: i.stringValue };
-						}),
+				const list = {
+					type: "list",
+					header: {
+						type: "text",
+						text: "Menú de Áreas",
 					},
-				]);
+					body: {
+						text:
+							currentState.message.response?.stringValue ||
+							currentState.message,
+					},
+					footer: {
+						text: "Por favor, presiona el botón debajo y selecciona una opción.",
+					},
+					action: {
+						button: "Desplegar opciones",
+						sections: [
+							{
+								title: "Áreas",
+								rows: [
+									{
+										id: "Defensa al Consumidor",
+										title: "Defensa al Consumidor",
+									},
+									{
+										id: "Derechos de Inquilinos",
+										title: "Derechos de inquilinos",
+									},
+									{
+										id: "Juventud",
+										title: "Juventud",
+									},
+									{
+										id: "Servicios Públicos",
+										title: "Servicios Públicos",
+									},
+									{
+										id: "Defensoría Itinerante",
+										title: "Defensoría Itinerante",
+									},
+								],
+							},
+						],
+					},
+				};
+
+				await provider.sendList(ctx.from, list);
 			} else {
 				await flowDynamic(
 					currentState.message.response?.stringValue || currentState.message
