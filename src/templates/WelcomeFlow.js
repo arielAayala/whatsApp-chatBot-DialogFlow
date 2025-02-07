@@ -172,7 +172,7 @@ const endFlow = addKeyword(EVENTS.ACTION).addAction(
 					header: "End",
 					body:
 						currentState.message.response?.stringValue || currentState.message,
-					buttons: [{ body: "Volver al Inicio" }],
+					buttons: [{ body: "Volver al Inicio" }, { body: "Abandonar" }],
 				},
 			]);
 		} catch (error) {
